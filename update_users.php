@@ -1,49 +1,52 @@
 <?php 
 
-//mengambil id dari parameter
-$idusers=$_GET['id'];
+$idusers = intval($_GET['id']);
 
-// proses update
 if(isset($_POST['update'])){
-    //mengambil data dari form
-    $role=$_POST['role'];
-    
+    $role = $_POST['role'];
+
+    // Validasi role yang diizinkan
+    $allowed_roles = ['Perawat', 'Pasien'];
+    if(!in_array($role, $allowed_roles)){
+        $role = 'Pasien';
+    }
 
     $sql = "UPDATE users SET role='$role' WHERE idusers='$idusers'";
-    if ($conn->query($sql) === TRUE) {
+    if($conn->query($sql) === TRUE){
         header("Location:?page=users");
+        exit();
     }
 }
 
-
-
-$sql = "SELECT * FROM users WHERE idusers='$idusers'";
+$sql    = "SELECT * FROM users WHERE idusers='$idusers'";
 $result = $conn->query($sql);
-$row = $result->fetch_assoc();
+$row    = $result->fetch_assoc();
 ?>
 
 <div class="row">
     <div class="col-sm-12">
         <form action="" method="POST">
-            <div class="card border-dark">
-                <div class="card">
-                <div class="card-header bg-primary text-white border-dark"><strong>Update Data Users</strong></div>
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white border-dark">
+                    <strong><i class="fas fa-user-edit mr-2"></i>Update Data Users</strong>
+                </div>
                 <div class="card-body">
+
                     <div class="form-group">
-                        <label for="">Username</label>
-                        <input type="text" class="form-control" name="username" value="<?php echo $row['username'] ?>" readonly>
+                        <label>Username</label>
+                        <input type="text" class="form-control"
+                               value="<?php echo htmlspecialchars($row['username']); ?>" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="">Password</label>
-                        <input type="password" class="form-control" name="ket" value="" readonly>
+                        <label>Password</label>
+                        <input type="password" class="form-control"
+                               placeholder="Password tidak ditampilkan" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="">Role</label>
-                         <select class="form-control chosen" data-placeholder="Pilih Role" name="role">
-                            <option value="<?php echo $row['role']; ?>"><?php echo $row['role']; ?></option>
-                            <option value="Dokter">Dokter</option>
-                            <option value="Admin">Admin</option>
-                            <option value="Pasien">Pasien</option>
+                        <label>Role</label>
+                        <select class="form-control chosen" data-placeholder="Pilih Role" name="role">
+                            <option value="Perawat" <?php echo $row['role'] == 'Perawat' ? 'selected' : ''; ?>>Perawat</option>
+                            <option value="Pasien"  <?php echo $row['role'] == 'Pasien'  ? 'selected' : ''; ?>>Pasien</option>
                         </select>
                     </div>
 

@@ -1,43 +1,48 @@
 <?php
 
 if(isset($_POST['simpan'])){
+    $username = mysqli_real_escape_string($conn, trim($_POST['username']));
+    $pass     = md5($_POST['pass']);
+    $role     = $_POST['role'];
 
-//mengambil data dari form
-    $username=$_POST['username'];
-	$pass=md5($_POST['pass']);
-    $role=$_POST['role'];
-    
-	//proses simpan
-    $sql = "INSERT INTO users VALUES (Null,'$username','$pass', '$role')";
-    if ($conn->query($sql) === TRUE) {
-            header("Location:?page=users");
+    // Validasi role yang diizinkan
+    $allowed_roles = ['Perawat', 'Pasien'];
+    if(!in_array($role, $allowed_roles)){
+        $role = 'Pasien';
     }
-    
+
+    $sql = "INSERT INTO users (username, pass, role) VALUES ('$username','$pass','$role')";
+    if($conn->query($sql) === TRUE){
+        header("Location:?page=users");
+        exit();
+    }
 }
 ?>
-
 
 <div class="row">
     <div class="col-sm-12">
         <form action="" method="POST">
-            <div class="card border-dark">
-                <div class="card">
-                <div class="card-header bg-primary text-white border-dark"><strong>Tambah Data Users</strong></div>
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white border-dark">
+                    <strong><i class="fas fa-user-plus mr-2"></i>Tambah Data Users</strong>
+                </div>
                 <div class="card-body">
+
                     <div class="form-group">
-                        <label for="">Username</label>
-                        <input type="text" class="form-control" name="username" maxlength="30" required>
+                        <label>Username</label>
+                        <input type="text" class="form-control" name="username" maxlength="30"
+                               placeholder="Masukkan username" required>
                     </div>
                     <div class="form-group">
-                        <label for="">Password</label>
-                        <input type="password" class="form-control" name="pass" maxlength="10" required>
+                        <label>Password</label>
+                        <input type="password" class="form-control" name="pass" maxlength="30"
+                               placeholder="Masukkan password" required>
                     </div>
                     <div class="form-group">
-                        <label for="">Role</label>
-                        <select class="form-control chosen" data-placeholder="Pilih Role" name="role">
-                            <option value=""></option>
-                            <option value="Dokter">Dokter</option>
-                            <option value="Admin">Admin</option>
+                        <label>Role</label>
+                        <select class="form-control chosen" data-placeholder="Pilih Role" name="role" required>
+                            <option value="">-- Pilih Role --</option>
+                            <option value="Perawat">Perawat</option>
                             <option value="Pasien">Pasien</option>
                         </select>
                     </div>
