@@ -18,63 +18,74 @@ if(isset($_POST['proses'])){
     $tgl            = date("Y-m-d");
 
     // Simpan konsultasi
-    $sql = "INSERT INTO konsultasi (idusers, tanggal, nama, usia, alamat, berat_badan, tinggi_badan, golongan_darah)
-            VALUES ('$idusers', '$tgl', '$nmpasien', '$usia', '$alamat', '$berat_badan', '$tinggi_badan', '$golongan_darah')";
-    mysqli_query($conn, $sql);
+    $sql_konsultasi = "INSERT INTO konsultasi (idusers, tanggal, nama, usia, alamat, berat_badan, tinggi_badan, golongan_darah)
+                       VALUES ('$idusers', '$tgl', '$nmpasien', '$usia', '$alamat', '$berat_badan', '$tinggi_badan', '$golongan_darah')";
+    mysqli_query($conn, $sql_konsultasi);
 
     // Ambil idkonsultasi yang baru dibuat
     $idkonsultasi = $conn->insert_id;
 
-    // Simpan semua gejala yang dipilih
-    $idgejala = $_POST['idgejala'];
-    $jumlah   = count($idgejala);
-    for($i = 0; $i < $jumlah; $i++){
-        $idgejalane = intval($idgejala[$i]);
-        $sql = "INSERT INTO detail_konsultasi VALUES ('$idkonsultasi','$idgejalane')";
-        mysqli_query($conn, $sql);
+    // ===== Simpan semua gejala yang dipilih =====
+    // Kumpulkan dulu semua idgejala ke array, baru INSERT satu per satu
+    $arr_idgejala = isset($_POST['idgejala']) ? $_POST['idgejala'] : [];
+    foreach($arr_idgejala as $idgejalane){
+        $idgejalane = intval($idgejalane);
+        $sql_detail = "INSERT INTO detail_konsultasi (idkonsultasi, idgejala) VALUES ('$idkonsultasi', '$idgejalane')";
+        mysqli_query($conn, $sql_detail);
     }
 
     // ===== Forward Chaining =====
-    $sql    = "SELECT * FROM penyakit";
-    $result = $conn->query($sql);
-    while($row = $result->fetch_assoc()){
-        $idpenyakit = $row['idpenyakit'];
-        $jyes       = 0;
+    // Ambil semua penyakit ke array PHP terlebih dahulu
+    $sql_penyakit = "SELECT idpenyakit FROM penyakit";
+    $res_penyakit = $conn->query($sql_penyakit);
+    $arr_penyakit = [];
+    while($r = $res_penyakit->fetch_assoc()){
+        $arr_penyakit[] = $r['idpenyakit'];
+    }
+    $res_penyakit->free();
 
+    foreach($arr_penyakit as $idpenyakit){
         // Hitung jumlah gejala di basis aturan untuk penyakit ini
-        $sql2    = "SELECT COUNT(idpenyakit) AS jml_gejala 
-                    FROM basis_aturan INNER JOIN detail_basis_aturan
-                    ON basis_aturan.idaturan = detail_basis_aturan.idaturan
-                    WHERE idpenyakit='$idpenyakit'";
-        $result2 = $conn->query($sql2);
-        $row2    = $result2->fetch_assoc();
-        $jml_gejala = $row2['jml_gejala'];
+        $sql_jml = "SELECT COUNT(dba.idgejala) AS jml_gejala
+                    FROM basis_aturan ba
+                    INNER JOIN detail_basis_aturan dba ON ba.idaturan = dba.idaturan
+                    WHERE ba.idpenyakit='$idpenyakit'";
+        $res_jml  = $conn->query($sql_jml);
+        $row_jml  = $res_jml->fetch_assoc();
+        $jml_gejala = intval($row_jml['jml_gejala']);
+        $res_jml->free();
 
-        // Bandingkan gejala basis aturan dengan gejala yang dipilih pasien
-        $sql3    = "SELECT idgejala 
-                    FROM basis_aturan INNER JOIN detail_basis_aturan
-                    ON basis_aturan.idaturan = detail_basis_aturan.idaturan
-                    WHERE idpenyakit='$idpenyakit'";
-        $result3 = $conn->query($sql3);
-        while($row3 = $result3->fetch_assoc()){
-            $idgejalane = $row3['idgejala'];
-            $sql4    = "SELECT idgejala FROM detail_konsultasi
-                        WHERE idkonsultasi='$idkonsultasi' AND idgejala='$idgejalane'";
-            $result4 = $conn->query($sql4);
-            if($result4->num_rows > 0) $jyes++;
+        if($jml_gejala == 0) continue;
+
+        // Ambil semua gejala basis aturan untuk penyakit ini ke array PHP
+        $sql_gejala_ba = "SELECT dba.idgejala
+                          FROM basis_aturan ba
+                          INNER JOIN detail_basis_aturan dba ON ba.idaturan = dba.idaturan
+                          WHERE ba.idpenyakit='$idpenyakit'";
+        $res_gejala_ba  = $conn->query($sql_gejala_ba);
+        $arr_gejala_ba  = [];
+        while($r = $res_gejala_ba->fetch_assoc()){
+            $arr_gejala_ba[] = intval($r['idgejala']);
         }
+        $res_gejala_ba->free();
+
+        // Hitung kecocokan dengan cara membandingkan array PHP
+        // (tidak perlu query ke DB per gejala, lebih cepat dan bebas konflik)
+        $arr_gejala_pasien = array_map('intval', $arr_idgejala);
+        $jyes = count(array_intersect($arr_gejala_ba, $arr_gejala_pasien));
 
         // Hitung persentase kecocokan
-        $peluang = ($jml_gejala > 0) ? round(($jyes / $jml_gejala) * 100, 2) : 0;
+        $peluang = round(($jyes / $jml_gejala) * 100, 2);
 
         // Simpan jika ada kecocokan
         if($peluang > 0){
-            $sql = "INSERT INTO detail_penyakit VALUES ('$idkonsultasi','$idpenyakit','$peluang')";
-            mysqli_query($conn, $sql);
+            $sql_ins = "INSERT INTO detail_penyakit (idkonsultasi, idpenyakit, persentase)
+                        VALUES ('$idkonsultasi','$idpenyakit','$peluang')";
+            mysqli_query($conn, $sql_ins);
         }
     }
 
-    // Tutup koneksi SETELAH semua proses selesai
+    // Tutup koneksi setelah semua proses selesai
     $conn->close();
 
     header("Location:?page=konsultasi&action=hasil&idkonsultasi=$idkonsultasi");
@@ -168,7 +179,16 @@ if(isset($_POST['proses'])){
                         Centang semua gejala yang sesuai dengan kondisi Anda saat ini.
                     </p>
 
-                    <table class="table table-bordered table-hover" id="myTable">
+                    <!-- Kotak pencarian manual — tidak memakai DataTables agar semua checkbox tetap ada di DOM -->
+                    <div class="input-group mb-2" style="max-width:400px;">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        </div>
+                        <input type="text" id="cariGejala" class="form-control"
+                               placeholder="Cari gejala..." autocomplete="off">
+                    </div>
+
+                    <table class="table table-bordered table-hover" id="tabelGejala">
                         <thead class="thead-light">
                             <tr>
                                 <th width="50px" class="text-center">Pilih</th>
@@ -179,21 +199,20 @@ if(isset($_POST['proses'])){
                         <tbody>
                             <?php
                                 $no  = 1;
-                                $sql = "SELECT * FROM gejala ORDER BY nmgejala ASC";
-                                $result = $conn->query($sql);
-                                while($row = $result->fetch_assoc()) {
+                                $sql_gejala_list = "SELECT * FROM gejala ORDER BY nmgejala ASC";
+                                $res_gejala_list = $conn->query($sql_gejala_list);
+                                while($row_gejala = $res_gejala_list->fetch_assoc()) {
                             ?>
                             <tr>
                                 <td class="text-center">
                                     <input type="checkbox" class="check-item"
                                            name="idgejala[]"
-                                           value="<?php echo $row['idgejala']; ?>">
+                                           value="<?php echo $row_gejala['idgejala']; ?>">
                                 </td>
                                 <td><?php echo $no++; ?></td>
-                                <td><?php echo htmlspecialchars($row['nmgejala']); ?></td>
+                                <td><?php echo htmlspecialchars($row_gejala['nmgejala']); ?></td>
                             </tr>
-                            <?php } ?>
-                            <!-- $conn->close() DIHAPUS dari sini -->
+                            <?php } $res_gejala_list->free(); ?>
                         </tbody>
                     </table>
 
@@ -226,6 +245,16 @@ if(isset($_POST['proses'])){
             document.getElementById('imt-info').style.display = 'block';
         }
     }
+
+    // Pencarian manual — semua baris tetap ada di DOM, hanya disembunyikan via CSS
+    document.getElementById('cariGejala').addEventListener('keyup', function(){
+        var kata = this.value.toLowerCase();
+        var baris = document.querySelectorAll('#tabelGejala tbody tr');
+        baris.forEach(function(tr){
+            var teks = tr.querySelector('td:last-child').textContent.toLowerCase();
+            tr.style.display = teks.includes(kata) ? '' : 'none';
+        });
+    });
 
     function validasiForm(){
         var checkbox  = document.getElementsByName('idgejala[]');
