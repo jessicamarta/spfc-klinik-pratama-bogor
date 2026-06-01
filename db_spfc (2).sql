@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 12, 2026 at 08:17 AM
+-- Generation Time: Jun 01, 2026 at 07:28 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.1.25
 
@@ -291,7 +291,18 @@ INSERT INTO `detail_konsultasi` (`idkonsultasi`, `idgejala`) VALUES
 (1, 31),
 (2, 69),
 (2, 70),
-(2, 51);
+(2, 51),
+(3, 33),
+(4, 31),
+(5, 68),
+(6, 21),
+(7, 54),
+(8, 89),
+(8, 91),
+(9, 17),
+(10, 66),
+(10, 64),
+(10, 59);
 
 -- --------------------------------------------------------
 
@@ -324,7 +335,32 @@ INSERT INTO `detail_penyakit` (`idkonsultasi`, `idpenyakit`, `persentase`) VALUE
 (2, 21, 20),
 (2, 23, 50),
 (2, 24, 50),
-(2, 25, 100);
+(2, 25, 100),
+(3, 12, 50),
+(3, 13, 25),
+(4, 6, 33),
+(4, 11, 33),
+(4, 12, 50),
+(4, 13, 25),
+(5, 24, 50),
+(6, 7, 25),
+(7, 15, 20),
+(7, 16, 20),
+(8, 29, 13),
+(8, 31, 67),
+(8, 33, 17),
+(8, 34, 14),
+(8, 35, 14),
+(9, 5, 25),
+(10, 14, 20),
+(10, 15, 20),
+(10, 16, 20),
+(10, 17, 20),
+(10, 18, 20),
+(10, 19, 17),
+(10, 20, 25),
+(10, 21, 20),
+(10, 22, 75);
 
 -- --------------------------------------------------------
 
@@ -446,17 +482,52 @@ INSERT INTO `gejala` (`idgejala`, `nmgejala`) VALUES
 
 CREATE TABLE `konsultasi` (
   `idkonsultasi` int(11) NOT NULL,
+  `idusers` int(11) NOT NULL DEFAULT 0,
   `tanggal` date NOT NULL,
-  `nama` varchar(50) NOT NULL
+  `nama` varchar(50) NOT NULL,
+  `usia` int(3) NOT NULL DEFAULT 0,
+  `alamat` varchar(200) NOT NULL DEFAULT '',
+  `berat_badan` decimal(5,2) NOT NULL DEFAULT 0.00,
+  `tinggi_badan` decimal(5,2) NOT NULL DEFAULT 0.00,
+  `golongan_darah` varchar(3) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `konsultasi`
 --
 
-INSERT INTO `konsultasi` (`idkonsultasi`, `tanggal`, `nama`) VALUES
-(1, '2026-05-06', 'Jessy'),
-(2, '2026-05-11', 'Jessica Marta');
+INSERT INTO `konsultasi` (`idkonsultasi`, `idusers`, `tanggal`, `nama`, `usia`, `alamat`, `berat_badan`, `tinggi_badan`, `golongan_darah`) VALUES
+(1, 0, '2026-05-06', 'Jessy', 0, '', 0.00, 0.00, ''),
+(2, 0, '2026-05-11', 'Jessica Marta', 0, '', 0.00, 0.00, ''),
+(3, 0, '2026-05-31', 'Jeremy Godwin', 16, 'Depok Timur', 49.00, 173.00, 'B'),
+(4, 0, '2026-05-31', 'Jeremy Godwin', 16, 'Depok Timur', 49.00, 173.00, 'B'),
+(5, 7, '2026-06-01', 'Yohannes', 60, 'Depok Dalam', 60.00, 179.00, 'A'),
+(6, 7, '2026-06-01', 'Yohannes', 60, 'Depok Dalam', 60.00, 179.00, 'A'),
+(7, 7, '2026-06-01', 'Yohannes', 60, 'Depok Dalam', 60.00, 179.00, 'A'),
+(8, 7, '2026-06-01', 'Yohannes', 60, 'Depok Dalam', 60.00, 179.00, 'A'),
+(9, 7, '2026-06-01', 'Yohannes', 60, 'Depok Dalam', 60.00, 179.00, 'A'),
+(10, 8, '2026-06-01', 'Jeremy', 16, 'Depok Timur', 55.00, 172.00, 'A');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pasien`
+--
+
+CREATE TABLE `pasien` (
+  `idpasien` int(11) NOT NULL,
+  `idusers` int(11) NOT NULL,
+  `nama_lengkap` varchar(100) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pasien`
+--
+
+INSERT INTO `pasien` (`idpasien`, `idusers`, `nama_lengkap`, `created_at`) VALUES
+(1, 7, 'Yohannes', '2026-06-01 04:36:25'),
+(2, 8, 'Jeremy', '2026-06-01 05:13:25');
 
 -- --------------------------------------------------------
 
@@ -528,9 +599,12 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`idusers`, `username`, `pass`, `role`) VALUES
-(1, 'Ester', '184e88c34d99fadfd71366cff8388225', 'Dokter'),
-(2, 'Admin', 'e3afed0047b08059d0fada10f400c1e5', 'Admin'),
-(3, 'Jessica', '88e11caee979ba2bf6c1aa459b2cd77b', 'Pasien');
+(1, 'Ester', '184e88c34d99fadfd71366cff8388225', 'Perawat'),
+(2, 'Admin', 'e3afed0047b08059d0fada10f400c1e5', 'Perawat'),
+(3, 'Jessica', '88e11caee979ba2bf6c1aa459b2cd77b', 'Pasien'),
+(5, 'Perawat', '88302402fc4986121efe4a68ba6f5706', 'Perawat'),
+(7, 'Yohannes', 'd0ee211fef77bd2fed4e9c3c04486a1c', 'Pasien'),
+(8, 'Jeremy', '877b13f232fe100743d38e5bcb9a82d3', 'Pasien');
 
 --
 -- Indexes for dumped tables
@@ -553,6 +627,12 @@ ALTER TABLE `gejala`
 --
 ALTER TABLE `konsultasi`
   ADD PRIMARY KEY (`idkonsultasi`);
+
+--
+-- Indexes for table `pasien`
+--
+ALTER TABLE `pasien`
+  ADD PRIMARY KEY (`idpasien`);
 
 --
 -- Indexes for table `penyakit`
@@ -586,7 +666,13 @@ ALTER TABLE `gejala`
 -- AUTO_INCREMENT for table `konsultasi`
 --
 ALTER TABLE `konsultasi`
-  MODIFY `idkonsultasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idkonsultasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `pasien`
+--
+ALTER TABLE `pasien`
+  MODIFY `idpasien` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `penyakit`
@@ -598,7 +684,7 @@ ALTER TABLE `penyakit`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `idusers` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `idusers` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
