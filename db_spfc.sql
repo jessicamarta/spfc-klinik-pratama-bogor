@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jun 30, 2026 at 10:56 AM
+-- Generation Time: Jul 23, 2026 at 09:48 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -274,6 +274,20 @@ CREATE TABLE `detail_konsultasi` (
   `idgejala` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `detail_konsultasi`
+--
+
+INSERT INTO `detail_konsultasi` (`idkonsultasi`, `idgejala`) VALUES
+(1, 27),
+(1, 26),
+(1, 23),
+(2, 14),
+(2, 12),
+(2, 57),
+(2, 72),
+(2, 77);
+
 -- --------------------------------------------------------
 
 --
@@ -285,6 +299,27 @@ CREATE TABLE `detail_penyakit` (
   `idpenyakit` int(11) NOT NULL,
   `persentase` tinyint(4) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `detail_penyakit`
+--
+
+INSERT INTO `detail_penyakit` (`idkonsultasi`, `idpenyakit`, `persentase`) VALUES
+(1, 6, 100),
+(1, 7, 33),
+(1, 8, 50),
+(2, 3, 50),
+(2, 13, 20),
+(2, 14, 20),
+(2, 15, 20),
+(2, 16, 20),
+(2, 17, 17),
+(2, 18, 25),
+(2, 19, 20),
+(2, 26, 14),
+(2, 27, 13),
+(2, 28, 11),
+(2, 30, 14);
 
 -- --------------------------------------------------------
 
@@ -410,11 +445,20 @@ CREATE TABLE `konsultasi` (
   `tanggal` date NOT NULL,
   `nama` varchar(50) NOT NULL,
   `usia` int(3) NOT NULL DEFAULT 0,
+  `jenis_kelamin` varchar(1) NOT NULL DEFAULT '',
   `alamat` varchar(200) NOT NULL DEFAULT '',
   `berat_badan` decimal(5,2) NOT NULL DEFAULT 0.00,
   `tinggi_badan` decimal(5,2) NOT NULL DEFAULT 0.00,
   `golongan_darah` varchar(3) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `konsultasi`
+--
+
+INSERT INTO `konsultasi` (`idkonsultasi`, `idusers`, `tanggal`, `nama`, `usia`, `jenis_kelamin`, `alamat`, `berat_badan`, `tinggi_badan`, `golongan_darah`) VALUES
+(1, 8, '2026-06-30', 'Jeremy', 16, '', 'Jalan Sonokembang Raya', 55.00, 170.00, 'O'),
+(2, 8, '2026-07-10', 'Jeremy', 15, '', 'Depok Dalam 2', 55.00, 169.00, 'B');
 
 -- --------------------------------------------------------
 
@@ -426,6 +470,10 @@ CREATE TABLE `pasien` (
   `idpasien` int(11) NOT NULL,
   `idusers` int(11) NOT NULL,
   `nama_lengkap` varchar(100) NOT NULL,
+  `tanggal_lahir` date DEFAULT NULL,
+  `jenis_kelamin` enum('L','P') DEFAULT NULL,
+  `golongan_darah` varchar(3) DEFAULT NULL,
+  `alamat` varchar(200) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -433,9 +481,9 @@ CREATE TABLE `pasien` (
 -- Dumping data for table `pasien`
 --
 
-INSERT INTO `pasien` (`idpasien`, `idusers`, `nama_lengkap`, `created_at`) VALUES
-(1, 7, 'Yohannes', '2026-06-01 04:36:25'),
-(2, 8, 'Jeremy', '2026-06-01 05:13:25');
+INSERT INTO `pasien` (`idpasien`, `idusers`, `nama_lengkap`, `tanggal_lahir`, `jenis_kelamin`, `golongan_darah`, `alamat`, `created_at`) VALUES
+(1, 7, 'Yohannes', NULL, NULL, NULL, NULL, '2026-06-01 04:36:25'),
+(2, 8, 'Jeremy', NULL, NULL, NULL, NULL, '2026-06-01 05:13:25');
 
 -- --------------------------------------------------------
 
@@ -574,7 +622,7 @@ ALTER TABLE `gejala`
 -- AUTO_INCREMENT for table `konsultasi`
 --
 ALTER TABLE `konsultasi`
-  MODIFY `idkonsultasi` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idkonsultasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `pasien`
