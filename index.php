@@ -18,6 +18,7 @@ if(!isset($_SESSION['status']) || $_SESSION['status'] != "y"){
     <link rel="stylesheet" href="assets/css/datatables.min.css">
     <link rel="stylesheet" href="assets/css/all.css">
     <link rel="stylesheet" href="assets/css/bootstrap-chosen.css">
+    <link rel="stylesheet" href="assets/css/mobile-fixes.css">
 </head>
 <body>
 

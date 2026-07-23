@@ -69,6 +69,7 @@ if(isset($_POST['register'])){
     <title>Register - SPFC</title>
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/all.css">
+    <link rel="stylesheet" href="assets/css/mobile-fixes.css">
     <style>
         body { background: linear-gradient(135deg,#e8f4f8 0%,#d6eaf8 100%); min-height:100vh; font-family:'Segoe UI',sans-serif; }
         .register-wrapper { min-height:calc(100vh - 56px); display:flex; align-items:center; justify-content:center; padding:30px 15px; }

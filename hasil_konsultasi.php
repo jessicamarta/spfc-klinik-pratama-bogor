@@ -34,6 +34,7 @@ if(!empty($row['berat_badan']) && !empty($row['tinggi_badan']) && $row['tinggi_b
 
                 <div class="row">
                     <div class="col-md-6">
+                        <div class="table-responsive">
                         <table class="table table-sm table-borderless">
                             <tr>
                                 <td width="160px" class="text-muted">Nama Lengkap</td>
@@ -56,8 +57,10 @@ if(!empty($row['berat_badan']) && !empty($row['tinggi_badan']) && $row['tinggi_b
                                 <td>: <?php echo date('d/m/Y', strtotime($row['tanggal'])); ?></td>
                             </tr>
                         </table>
+                        </div>
                     </div>
                     <div class="col-md-6">
+                        <div class="table-responsive">
                         <table class="table table-sm table-borderless">
                             <tr>
                                 <td width="160px" class="text-muted">Berat Badan</td>
@@ -76,6 +79,7 @@ if(!empty($row['berat_badan']) && !empty($row['tinggi_badan']) && $row['tinggi_b
                                 <td>: <?php echo !empty($row['alamat']) ? htmlspecialchars($row['alamat']) : '-'; ?></td>
                             </tr>
                         </table>
+                        </div>
                     </div>
                 </div>
 
@@ -85,6 +89,7 @@ if(!empty($row['berat_badan']) && !empty($row['tinggi_badan']) && $row['tinggi_b
                 <h6 class="font-weight-bold text-primary mb-3">
                     <i class="fas fa-clipboard-list mr-2"></i>Gejala yang Dipilih
                 </h6>
+                <div class="table-responsive">
                 <table class="table table-bordered table-sm">
                     <thead class="thead-light">
                         <tr>
@@ -109,6 +114,7 @@ if(!empty($row['berat_badan']) && !empty($row['tinggi_badan']) && $row['tinggi_b
                         <?php } ?>
                     </tbody>
                 </table>
+                </div>
 
                 <hr>
 
@@ -135,6 +141,7 @@ if(!empty($row['berat_badan']) && !empty($row['tinggi_badan']) && $row['tinggi_b
                         Silakan konsultasikan langsung dengan perawat atau dokter di klinik.
                     </div>
                 <?php else: ?>
+                    <div class="table-responsive">
                     <table class="table table-bordered">
                         <thead class="thead-light">
                             <tr>
@@ -179,6 +186,7 @@ if(!empty($row['berat_badan']) && !empty($row['tinggi_badan']) && $row['tinggi_b
                             <?php } ?>
                         </tbody>
                     </table>
+                    </div>
 
                     <div class="alert alert-warning mt-2">
                         <i class="fas fa-exclamation-triangle mr-2"></i>

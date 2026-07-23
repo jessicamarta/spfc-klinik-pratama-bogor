@@ -1,0 +1,125 @@
+
+.chosen-container {
+    width: 100% !important;
+    max-width: 100%;
+}
+
+/* Supaya tabel yang lebar (banyak kolom) bisa di-scroll horizontal
+   di dalam kotaknya sendiri, tidak mendorong seluruh halaman melebar. */
+.table-responsive {
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 576px) {
+    /* Kurangi padding card & jumbotron di layar kecil supaya konten
+       tidak terlalu sempit dan tidak banyak ruang terbuang */
+    .card-body {
+        padding: 1rem;
+    }
+    .jumbotron {
+        padding: 1.75rem 1rem;
+    }
+    .register-body {
+        padding: 20px;
+    }
+
+    /* Judul besar disesuaikan supaya tidak terlalu memenuhi layar HP */
+    .jumbotron h2.display-5 {
+        font-size: 1.6rem;
+    }
+
+    /* Tabel data (daftar gejala, penyakit, konsultasi, dll) â€”
+       perkecil sedikit font & padding sel supaya lebih banyak
+       kolom yang muat tanpa perlu di-scroll */
+    .table-responsive table {
+        font-size: 0.85rem;
+    }
+    .table-responsive table th,
+    .table-responsive table td {
+        padding: 0.4rem;
+        white-space: nowrap;
+    }
+
+    /* Tombol aksi (edit/hapus/detail) di dalam tabel supaya tidak
+       saling tumpuk terlalu rapat di layar kecil */
+    .table-responsive .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+        margin-bottom: 2px;
+    }
+
+    /* Tombol submit utama full-width di HP supaya lebih mudah ditekan */
+    .btn-lg {
+        width: 100%;
+    }
+
+    /* Navbar brand & username jangan terlalu memakan tempat */
+    .navbar-brand {
+        font-size: 1.05rem;
+    }
+
+    /* Halaman welcome (landing page): kurangi padding kartu hero,
+       dan tombol Daftar/Login ditumpuk vertikal biar tidak sempit */
+    .hero-card {
+        padding: 30px 22px !important;
+    }
+    .hero-title {
+        font-size: 1.4rem !important;
+    }
+    .hero-content .d-flex {
+        flex-direction: column;
+    }
+    .hero-content .d-flex .btn-hero {
+        width: 100%;
+        margin: 0 0 10px 0 !important;
+    }
+}
+
+/* =========================================================
+   MODE PRINT â€” dipakai oleh tombol "Print" di detail konsultasi
+   ========================================================= */
+
+/* Elemen bertanda .print-only cuma tampil saat dicetak,
+   disembunyikan saat dilihat normal di layar */
+.print-only {
+    display: none;
+}
+
+@media print {
+    /* Sembunyikan semua elemen yang tidak perlu ikut tercetak:
+       navbar, tombol print itu sendiri, tombol kembali, dll */
+    nav.navbar,
+    .no-print {
+        display: none !important;
+    }
+
+    .print-only {
+        display: block !important;
+    }
+
+    /* Lepas bayangan/border kartu supaya bersih di kertas,
+       dan hilangkan margin container supaya pas di halaman */
+    body {
+        background: #fff !important;
+    }
+    .container {
+        margin: 0 !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+    }
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+    .card-body {
+        padding: 0 !important;
+    }
+
+    /* Tabel tetap rapi meski di-print, tanpa perlu geser horizontal */
+    .table-responsive {
+        overflow: visible !important;
+    }
+    table {
+        font-size: 0.85rem;
+    }
+}

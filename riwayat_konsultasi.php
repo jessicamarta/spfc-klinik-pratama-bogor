@@ -27,6 +27,7 @@ while($row = $result->fetch_assoc()){
                 <i class="fas fa-info-circle mr-1"></i>
                 Menampilkan riwayat konsultasi Anda. Klik detail untuk melihat hasil lengkap.
             </p>
+            <div class="table-responsive">
             <table class="table table-bordered" id="myTable">
                 <thead class="thead-light">
                     <tr>
@@ -58,6 +59,7 @@ while($row = $result->fetch_assoc()){
                     <?php endforeach; ?>
                 </tbody>
             </table>
+            </div>
         <?php endif; ?>
 
         <?php $conn->close(); ?>

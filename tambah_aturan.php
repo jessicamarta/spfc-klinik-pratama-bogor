@@ -79,6 +79,7 @@ if(isset($_POST['simpan'])){
                     <!--tabel data gejala gejala-->
                     <div class="form-group">
                         <label for="">Pilih gejala-gejala berikut :</label>
+                        <div class="table-responsive">
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
@@ -105,6 +106,7 @@ if(isset($_POST['simpan'])){
                                     ?>
                             </tbody>
                         </table>
+                        </div>
                     </div>
 
                     <input class="btn btn-primary" type="submit" name="simpan" value="Simpan">

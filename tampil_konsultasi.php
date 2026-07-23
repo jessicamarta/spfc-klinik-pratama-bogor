@@ -217,6 +217,7 @@ if(isset($_POST['proses'])){
                                placeholder="Cari gejala..." autocomplete="off">
                     </div>
 
+                    <div class="table-responsive">
                     <table class="table table-bordered table-hover" id="tabelGejala">
                         <thead class="thead-light">
                             <tr>
@@ -244,6 +245,7 @@ if(isset($_POST['proses'])){
                             <?php } $res_gejala_list->free(); ?>
                         </tbody>
                     </table>
+                    </div>
 
                     <button class="btn btn-primary btn-lg" type="submit" name="proses">
                         <i class="fas fa-search mr-2"></i>Proses Konsultasi

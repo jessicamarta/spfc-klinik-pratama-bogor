@@ -31,6 +31,7 @@ $row = $result->fetch_assoc();
 
                         <!--tabel gejala gejala-->
                         <label for="">Gejala Gejala Penyakit :</label>
+                        <div class="table-responsive">
                         <table class="table table-bordered">
                         <thead>
                         <tr>
@@ -58,6 +59,7 @@ $row = $result->fetch_assoc();
                             ?>
                         </tbody>
                         </table>
+                        </div>
 
 
 

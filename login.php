@@ -39,6 +39,7 @@ $conn->close();
     <title>Login - SPFC</title>
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/all.css">
+    <link rel="stylesheet" href="assets/css/mobile-fixes.css">
     <style>
         body {
             background: linear-gradient(135deg, #e8f4f8 0%, #d6eaf8 100%);

@@ -22,10 +22,21 @@ if(!empty($row['berat_badan']) && !empty($row['tinggi_badan']) && $row['tinggi_b
 <div class="row">
     <div class="col-sm-12">
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center no-print">
                 <strong><i class="fas fa-file-medical-alt mr-2"></i>Detail Hasil Konsultasi Pasien</strong>
+                <button type="button" class="btn btn-light btn-sm" onclick="window.print()">
+                    <i class="fas fa-print mr-1"></i>Print
+                </button>
             </div>
             <div class="card-body">
+
+                <!-- Judul ini hanya muncul saat di-print, karena header kartu di atas disembunyikan -->
+                <div class="print-only text-center mb-3">
+                    <h4 class="font-weight-bold mb-0">Klinik Pratama Bogor</h4>
+                    <p class="mb-0">Hasil Konsultasi Diagnosa Penyakit — Sistem Pakar Forward Chaining</p>
+                    <p class="text-muted small">Dicetak pada: <?php echo date('d/m/Y H:i'); ?></p>
+                    <hr>
+                </div>
 
                 <!-- DATA DIRI PASIEN -->
                 <h6 class="font-weight-bold text-primary mb-3">
@@ -34,6 +45,7 @@ if(!empty($row['berat_badan']) && !empty($row['tinggi_badan']) && $row['tinggi_b
 
                 <div class="row">
                     <div class="col-md-6">
+                        <div class="table-responsive">
                         <table class="table table-sm table-borderless">
                             <tr>
                                 <td width="160px" class="text-muted">Nama Lengkap</td>
@@ -56,8 +68,10 @@ if(!empty($row['berat_badan']) && !empty($row['tinggi_badan']) && $row['tinggi_b
                                 <td>: <?php echo date('d/m/Y', strtotime($row['tanggal'])); ?></td>
                             </tr>
                         </table>
+                        </div>
                     </div>
                     <div class="col-md-6">
+                        <div class="table-responsive">
                         <table class="table table-sm table-borderless">
                             <tr>
                                 <td width="160px" class="text-muted">Berat Badan</td>
@@ -76,6 +90,7 @@ if(!empty($row['berat_badan']) && !empty($row['tinggi_badan']) && $row['tinggi_b
                                 <td>: <?php echo !empty($row['alamat']) ? htmlspecialchars($row['alamat']) : '-'; ?></td>
                             </tr>
                         </table>
+                        </div>
                     </div>
                 </div>
 
@@ -85,6 +100,7 @@ if(!empty($row['berat_badan']) && !empty($row['tinggi_badan']) && $row['tinggi_b
                 <h6 class="font-weight-bold text-primary mb-3">
                     <i class="fas fa-clipboard-list mr-2"></i>Gejala yang Dilaporkan Pasien
                 </h6>
+                <div class="table-responsive">
                 <table class="table table-bordered table-sm">
                     <thead class="thead-light">
                         <tr>
@@ -109,6 +125,7 @@ if(!empty($row['berat_badan']) && !empty($row['tinggi_badan']) && $row['tinggi_b
                         <?php } ?>
                     </tbody>
                 </table>
+                </div>
 
                 <hr>
 
@@ -133,6 +150,7 @@ if(!empty($row['berat_badan']) && !empty($row['tinggi_badan']) && $row['tinggi_b
                         Tidak ada penyakit yang terdeteksi dari konsultasi ini.
                     </div>
                 <?php else: ?>
+                    <div class="table-responsive">
                     <table class="table table-bordered">
                         <thead class="thead-light">
                             <tr>
@@ -164,11 +182,12 @@ if(!empty($row['berat_badan']) && !empty($row['tinggi_badan']) && $row['tinggi_b
                             <?php } ?>
                         </tbody>
                     </table>
+                    </div>
                 <?php endif; ?>
 
                 <?php $conn->close(); ?>
 
-                <a class="btn btn-secondary" href="?page=konsultasiadm">
+                <a class="btn btn-secondary no-print" href="?page=konsultasiadm">
                     <i class="fas fa-arrow-left mr-1"></i>Kembali
                 </a>
             </div>

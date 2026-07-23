@@ -3,6 +3,7 @@
     <strong><i class="fas fa-clipboard-list mr-2"></i>Data Hasil Konsultasi Pasien</strong>
   </div>
   <div class="card-body">
+    <div class="table-responsive">
     <table class="table table-bordered" id="myTable">
     <thead class="thead-light">
       <tr>
@@ -42,5 +43,6 @@
     ?>
    </tbody>
 </table>
+</div>
 </div>
 </div>

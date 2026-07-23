@@ -2,6 +2,7 @@
   <div class="card-header bg-primary text-white border-dark"><strong>Data Basis Aturan</strong></div>
   <div class="card-body">
     <a class="btn btn-primary mb-2" href="?page=aturan&action=tambah">Tambah</a>
+    <div class="table-responsive">
     <table class="table table-bordered" id="myTable">
     <thead>
       <tr>
@@ -42,5 +43,6 @@
     ?>
    </tbody>
 </table>
+</div>
 </div>
 </div>
