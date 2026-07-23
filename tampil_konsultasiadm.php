@@ -10,6 +10,7 @@
         <th width="110px">Tanggal</th>
         <th>Nama Pasien</th>
         <th width="70px" class="text-center">Usia</th>
+        <th width="50px" class="text-center">JK</th>
         <th width="80px" class="text-center">Goldar</th>
         <th width="80px" class="text-center">Aksi</th>
       </tr>
@@ -26,6 +27,7 @@
             <td><?php echo date('d/m/Y', strtotime($row['tanggal'])); ?></td>
             <td><?php echo htmlspecialchars($row['nama']); ?></td>
             <td class="text-center"><?php echo isset($row['usia']) && $row['usia'] > 0 ? $row['usia'] . ' thn' : '-'; ?></td>
+            <td class="text-center"><?php echo !empty($row['jenis_kelamin']) ? $row['jenis_kelamin'] : '-'; ?></td>
             <td class="text-center"><?php echo !empty($row['golongan_darah']) ? $row['golongan_darah'] : '-'; ?></td>
             <td class="text-center">
                 <a class="btn btn-primary btn-sm"

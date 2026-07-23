@@ -44,6 +44,10 @@ if(!empty($row['berat_badan']) && !empty($row['tinggi_badan']) && $row['tinggi_b
                                 <td>: <?php echo isset($row['usia']) ? $row['usia'] : '-'; ?> tahun</td>
                             </tr>
                             <tr>
+                                <td class="text-muted">Jenis Kelamin</td>
+                                <td>: <?php echo $row['jenis_kelamin'] == 'L' ? 'Laki-laki' : ($row['jenis_kelamin'] == 'P' ? 'Perempuan' : '-'); ?></td>
+                            </tr>
+                            <tr>
                                 <td class="text-muted">Golongan Darah</td>
                                 <td>: <?php echo !empty($row['golongan_darah']) ? $row['golongan_darah'] : '-'; ?></td>
                             </tr>

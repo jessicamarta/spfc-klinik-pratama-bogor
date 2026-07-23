@@ -1,25 +1,44 @@
 <?php
 date_default_timezone_set("Asia/Jakarta");
 
-// Ambil nama lengkap pasien dari tabel pasien berdasarkan idusers session
+// Ambil data diri pasien (data master) dari tabel pasien berdasarkan idusers session
 $idusers = $_SESSION['idusers'];
-$sql_nama = "SELECT nama_lengkap FROM pasien WHERE idusers='$idusers'";
-$result_nama = $conn->query($sql_nama);
-$row_nama = $result_nama->fetch_assoc();
-$nama_pasien = $row_nama ? $row_nama['nama_lengkap'] : '';
+$sql_pasien  = "SELECT nama_lengkap, tanggal_lahir, jenis_kelamin, golongan_darah, alamat
+                FROM pasien WHERE idusers='$idusers'";
+$result_pasien = $conn->query($sql_pasien);
+$row_pasien    = $result_pasien->fetch_assoc();
+
+$nama_pasien    = $row_pasien ? $row_pasien['nama_lengkap']   : '';
+$tanggal_lahir  = $row_pasien ? $row_pasien['tanggal_lahir']  : '';
+$jenis_kelamin  = $row_pasien ? $row_pasien['jenis_kelamin']  : '';
+$golongan_darah = $row_pasien ? $row_pasien['golongan_darah'] : '';
+$alamat_pasien  = $row_pasien ? $row_pasien['alamat']         : '';
+
+// Hitung usia otomatis dari tanggal lahir (bukan input manual lagi)
+$usia_terhitung = 0;
+if(!empty($tanggal_lahir)){
+    $tgl_lahir_obj  = new DateTime($tanggal_lahir);
+    $usia_terhitung = $tgl_lahir_obj->diff(new DateTime())->y;
+}
 
 if(isset($_POST['proses'])){
     $nmpasien       = mysqli_real_escape_string($conn, $nama_pasien);
-    $usia           = intval($_POST['usia']);
-    $alamat         = mysqli_real_escape_string($conn, trim($_POST['alamat']));
+    $usia           = $usia_terhitung; // dihitung otomatis dari tanggal_lahir, bukan dari input pasien
+    $jk             = mysqli_real_escape_string($conn, $jenis_kelamin);
+    $alamat         = mysqli_real_escape_string($conn, trim($_POST['alamat'])); // boleh diedit pasien
     $berat_badan    = floatval($_POST['berat_badan']);
     $tinggi_badan   = floatval($_POST['tinggi_badan']);
-    $golongan_darah = mysqli_real_escape_string($conn, $_POST['golongan_darah']);
+    $golongan_darah_snap = mysqli_real_escape_string($conn, $golongan_darah); // dari data master, bukan input
     $tgl            = date("Y-m-d");
 
-    // Simpan konsultasi
-    $sql_konsultasi = "INSERT INTO konsultasi (idusers, tanggal, nama, usia, alamat, berat_badan, tinggi_badan, golongan_darah)
-                       VALUES ('$idusers', '$tgl', '$nmpasien', '$usia', '$alamat', '$berat_badan', '$tinggi_badan', '$golongan_darah')";
+    // Jika pasien mengedit alamat, sinkronkan juga ke data master pasien
+    if($alamat !== mysqli_real_escape_string($conn, $alamat_pasien)){
+        $conn->query("UPDATE pasien SET alamat='$alamat' WHERE idusers='$idusers'");
+    }
+
+    // Simpan konsultasi (snapshot data diri pasien pada saat konsultasi ini dibuat)
+    $sql_konsultasi = "INSERT INTO konsultasi (idusers, tanggal, nama, usia, jenis_kelamin, alamat, berat_badan, tinggi_badan, golongan_darah)
+                       VALUES ('$idusers', '$tgl', '$nmpasien', '$usia', '$jk', '$alamat', '$berat_badan', '$tinggi_badan', '$golongan_darah_snap')";
     mysqli_query($conn, $sql_konsultasi);
 
     // Ambil idkonsultasi yang baru dibuat
@@ -116,27 +135,29 @@ if(isset($_POST['proses'])){
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label>Usia (tahun) <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" name="usia"
-                                       placeholder="Contoh: 25" min="1" max="120" required>
+                                <label>Usia (tahun)</label>
+                                <input type="text" class="form-control bg-light"
+                                       value="<?php echo $usia_terhitung; ?> tahun" readonly>
+                                <small class="form-text text-muted">Dihitung otomatis dari tanggal lahir</small>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label>Golongan Darah <span class="text-danger">*</span></label>
-                                <select class="form-control" name="golongan_darah" required>
-                                    <option value="">-- Pilih --</option>
-                                    <option value="A">A</option>
-                                    <option value="B">B</option>
-                                    <option value="AB">AB</option>
-                                    <option value="O">O</option>
-                                    <option value="-">Tidak Tahu</option>
-                                </select>
+                                <label>Jenis Kelamin</label>
+                                <input type="text" class="form-control bg-light"
+                                       value="<?php echo $jenis_kelamin == 'L' ? 'Laki-laki' : ($jenis_kelamin == 'P' ? 'Perempuan' : '-'); ?>" readonly>
                             </div>
                         </div>
                     </div>
 
                     <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Golongan Darah</label>
+                                <input type="text" class="form-control bg-light"
+                                       value="<?php echo !empty($golongan_darah) ? $golongan_darah : '-'; ?>" readonly>
+                            </div>
+                        </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Berat Badan (kg) <span class="text-danger">*</span></label>
@@ -151,11 +172,19 @@ if(isset($_POST['proses'])){
                                        placeholder="Contoh: 165" step="0.1" min="1" max="300" required>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label>Alamat <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="alamat"
-                                       placeholder="Masukkan alamat lengkap" maxlength="200" required>
+                                <div class="input-group">
+                                    <input type="text" class="form-control bg-light" id="alamat" name="alamat"
+                                           value="<?php echo htmlspecialchars($alamat_pasien); ?>"
+                                           maxlength="200" readonly required>
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-outline-secondary" id="btnEditAlamat" title="Edit alamat">
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -229,6 +258,14 @@ if(isset($_POST['proses'])){
 <script>
     document.getElementById('berat_badan').addEventListener('input', hitungIMT);
     document.getElementById('tinggi_badan').addEventListener('input', hitungIMT);
+
+    // Alamat: readonly secara default, bisa diedit lewat tombol pensil
+    document.getElementById('btnEditAlamat').addEventListener('click', function(){
+        var inputAlamat = document.getElementById('alamat');
+        inputAlamat.readOnly = false;
+        inputAlamat.classList.remove('bg-light');
+        inputAlamat.focus();
+    });
 
     function hitungIMT(){
         var bb = parseFloat(document.getElementById('berat_badan').value);
