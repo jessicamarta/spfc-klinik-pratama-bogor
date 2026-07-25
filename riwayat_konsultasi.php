@@ -2,7 +2,10 @@
 // Hanya tampilkan konsultasi milik pasien yang sedang login
 $idusers = $_SESSION['idusers'];
 
-$sql    = "SELECT * FROM konsultasi WHERE idusers='$idusers' ORDER BY tanggal DESC, idkonsultasi DESC";
+$sql    = "SELECT konsultasi.*, pasien.nama_lengkap AS nama
+           FROM konsultasi
+           INNER JOIN pasien ON konsultasi.idusers = pasien.idusers
+           WHERE konsultasi.idusers='$idusers' ORDER BY tanggal DESC, idkonsultasi DESC";
 $result = $conn->query($sql);
 $data   = [];
 while($row = $result->fetch_assoc()){

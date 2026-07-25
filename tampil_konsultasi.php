@@ -21,8 +21,15 @@ if(!empty($tanggal_lahir)){
     $usia_terhitung = $tgl_lahir_obj->diff(new DateTime())->y;
 }
 
+// Ambil berat & tinggi badan dari konsultasi TERAKHIR milik pasien ini (kalau ada),
+// untuk ditampilkan sebagai nilai awal yang bisa diedit (sama seperti alamat)
+$sql_prev  = "SELECT berat_badan, tinggi_badan FROM konsultasi
+              WHERE idusers='$idusers' ORDER BY idkonsultasi DESC LIMIT 1";
+$row_prev  = $conn->query($sql_prev)->fetch_assoc();
+$berat_prev  = $row_prev ? rtrim(rtrim($row_prev['berat_badan'], '0'), '.')   : '';
+$tinggi_prev = $row_prev ? rtrim(rtrim($row_prev['tinggi_badan'], '0'), '.') : '';
+
 if(isset($_POST['proses'])){
-    $nmpasien       = mysqli_real_escape_string($conn, $nama_pasien);
     $usia           = $usia_terhitung; // dihitung otomatis dari tanggal_lahir, bukan dari input pasien
     $jk             = mysqli_real_escape_string($conn, $jenis_kelamin);
     $alamat         = mysqli_real_escape_string($conn, trim($_POST['alamat'])); // boleh diedit pasien
@@ -36,9 +43,10 @@ if(isset($_POST['proses'])){
         $conn->query("UPDATE pasien SET alamat='$alamat' WHERE idusers='$idusers'");
     }
 
-    // Simpan konsultasi (snapshot data diri pasien pada saat konsultasi ini dibuat)
-    $sql_konsultasi = "INSERT INTO konsultasi (idusers, tanggal, nama, usia, jenis_kelamin, alamat, berat_badan, tinggi_badan, golongan_darah)
-                       VALUES ('$idusers', '$tgl', '$nmpasien', '$usia', '$jk', '$alamat', '$berat_badan', '$tinggi_badan', '$golongan_darah_snap')";
+    // Simpan konsultasi (nama TIDAK disimpan lagi di sini, cukup diambil dari
+    // tabel pasien via idusers setiap kali ditampilkan)
+    $sql_konsultasi = "INSERT INTO konsultasi (idusers, tanggal, usia, jenis_kelamin, alamat, berat_badan, tinggi_badan, golongan_darah)
+                       VALUES ('$idusers', '$tgl', '$usia', '$jk', '$alamat', '$berat_badan', '$tinggi_badan', '$golongan_darah_snap')";
     mysqli_query($conn, $sql_konsultasi);
 
     // Ambil idkonsultasi yang baru dibuat
@@ -161,15 +169,45 @@ if(isset($_POST['proses'])){
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Berat Badan (kg) <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="berat_badan" name="berat_badan"
-                                       placeholder="Contoh: 60" step="0.1" min="1" max="300" required>
+                                <div class="input-group">
+                                    <input type="number" class="form-control <?php echo $berat_prev !== '' ? 'bg-light' : ''; ?>"
+                                           id="berat_badan" name="berat_badan"
+                                           value="<?php echo htmlspecialchars($berat_prev); ?>"
+                                           placeholder="Contoh: 60" step="0.1" min="1" max="300"
+                                           <?php echo $berat_prev !== '' ? 'readonly' : ''; ?> required>
+                                    <?php if($berat_prev !== ''): ?>
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-outline-secondary btn-edit-field" data-target="berat_badan" title="Edit berat badan">
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+                                    </div>
+                                    <?php endif; ?>
+                                </div>
+                                <?php if($berat_prev !== ''): ?>
+                                <small class="form-text text-muted">Diambil dari konsultasi terakhir Anda</small>
+                                <?php endif; ?>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Tinggi Badan (cm) <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="tinggi_badan" name="tinggi_badan"
-                                       placeholder="Contoh: 165" step="0.1" min="1" max="300" required>
+                                <div class="input-group">
+                                    <input type="number" class="form-control <?php echo $tinggi_prev !== '' ? 'bg-light' : ''; ?>"
+                                           id="tinggi_badan" name="tinggi_badan"
+                                           value="<?php echo htmlspecialchars($tinggi_prev); ?>"
+                                           placeholder="Contoh: 165" step="0.1" min="1" max="300"
+                                           <?php echo $tinggi_prev !== '' ? 'readonly' : ''; ?> required>
+                                    <?php if($tinggi_prev !== ''): ?>
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-outline-secondary btn-edit-field" data-target="tinggi_badan" title="Edit tinggi badan">
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+                                    </div>
+                                    <?php endif; ?>
+                                </div>
+                                <?php if($tinggi_prev !== ''): ?>
+                                <small class="form-text text-muted">Diambil dari konsultasi terakhir Anda</small>
+                                <?php endif; ?>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -180,7 +218,7 @@ if(isset($_POST['proses'])){
                                            value="<?php echo htmlspecialchars($alamat_pasien); ?>"
                                            maxlength="200" readonly required>
                                     <div class="input-group-append">
-                                        <button type="button" class="btn btn-outline-secondary" id="btnEditAlamat" title="Edit alamat">
+                                        <button type="button" class="btn btn-outline-secondary btn-edit-field" data-target="alamat" title="Edit alamat">
                                             <i class="fas fa-pen"></i>
                                         </button>
                                     </div>
@@ -261,13 +299,22 @@ if(isset($_POST['proses'])){
     document.getElementById('berat_badan').addEventListener('input', hitungIMT);
     document.getElementById('tinggi_badan').addEventListener('input', hitungIMT);
 
-    // Alamat: readonly secara default, bisa diedit lewat tombol pensil
-    document.getElementById('btnEditAlamat').addEventListener('click', function(){
-        var inputAlamat = document.getElementById('alamat');
-        inputAlamat.readOnly = false;
-        inputAlamat.classList.remove('bg-light');
-        inputAlamat.focus();
+    // Tombol edit generik: dipakai untuk alamat, berat badan, dan tinggi badan.
+    // Field-field ini terisi otomatis (readonly) dari data sebelumnya, tapi
+    // pasien tetap bisa mengetik ulang lewat tombol pensil ini.
+    document.querySelectorAll('.btn-edit-field').forEach(function(btn){
+        btn.addEventListener('click', function(){
+            var target = document.getElementById(btn.dataset.target);
+            target.readOnly = false;
+            target.classList.remove('bg-light');
+            target.focus();
+            target.select();
+        });
     });
+
+    // Kalau berat/tinggi badan sudah terisi otomatis dari konsultasi
+    // sebelumnya, langsung tampilkan IMT-nya tanpa menunggu user mengetik
+    hitungIMT();
 
     function hitungIMT(){
         var bb = parseFloat(document.getElementById('berat_badan').value);

@@ -2,7 +2,10 @@
 <?php 
 $idkonsultasi = intval($_GET['idkonsultasi']);
 
-$sql    = "SELECT * FROM konsultasi WHERE idkonsultasi='$idkonsultasi'";
+$sql    = "SELECT konsultasi.*, pasien.nama_lengkap AS nama
+           FROM konsultasi
+           INNER JOIN pasien ON konsultasi.idusers = pasien.idusers
+           WHERE idkonsultasi='$idkonsultasi'";
 $result = $conn->query($sql);
 $row    = $result->fetch_assoc();
 
@@ -125,11 +128,15 @@ if(!empty($row['berat_badan']) && !empty($row['tinggi_badan']) && $row['tinggi_b
 
                 <?php
                     $sql = "SELECT detail_penyakit.idpenyakit, penyakit.nmpenyakit,
-                                   penyakit.keterangan, penyakit.solusi, detail_penyakit.persentase
+                                   penyakit.keterangan, penyakit.solusi, detail_penyakit.persentase,
+                                   (SELECT COUNT(dba.idgejala)
+                                    FROM basis_aturan ba
+                                    INNER JOIN detail_basis_aturan dba ON ba.idaturan = dba.idaturan
+                                    WHERE ba.idpenyakit = detail_penyakit.idpenyakit) AS jml_gejala_aturan
                             FROM detail_penyakit INNER JOIN penyakit 
                             ON detail_penyakit.idpenyakit = penyakit.idpenyakit
                             WHERE idkonsultasi='$idkonsultasi'
-                            ORDER BY persentase DESC";
+                            ORDER BY persentase DESC, jml_gejala_aturan DESC, penyakit.nmpenyakit ASC";
                     $result = $conn->query($sql);
                     $totalRows = $result->num_rows;
                 ?>
@@ -157,11 +164,15 @@ if(!empty($row['berat_badan']) && !empty($row['tinggi_badan']) && $row['tinggi_b
                                 $no = 1;
                                 // Reset result pointer
                                 $sql = "SELECT detail_penyakit.idpenyakit, penyakit.nmpenyakit,
-                                               penyakit.keterangan, penyakit.solusi, detail_penyakit.persentase
+                                               penyakit.keterangan, penyakit.solusi, detail_penyakit.persentase,
+                                               (SELECT COUNT(dba.idgejala)
+                                                FROM basis_aturan ba
+                                                INNER JOIN detail_basis_aturan dba ON ba.idaturan = dba.idaturan
+                                                WHERE ba.idpenyakit = detail_penyakit.idpenyakit) AS jml_gejala_aturan
                                         FROM detail_penyakit INNER JOIN penyakit 
                                         ON detail_penyakit.idpenyakit = penyakit.idpenyakit
                                         WHERE idkonsultasi='$idkonsultasi'
-                                        ORDER BY persentase DESC";
+                                        ORDER BY persentase DESC, jml_gejala_aturan DESC, penyakit.nmpenyakit ASC";
                                 $result = $conn->query($sql);
                                 while($row3 = $result->fetch_assoc()){
                                     $persen = $row3['persentase'];

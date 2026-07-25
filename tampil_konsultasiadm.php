@@ -19,7 +19,10 @@
     <tbody>
      <?php
         $no  = 1;
-        $sql = "SELECT * FROM konsultasi ORDER BY tanggal DESC, idkonsultasi DESC";
+        $sql = "SELECT konsultasi.*, pasien.nama_lengkap AS nama
+                FROM konsultasi
+                INNER JOIN pasien ON konsultasi.idusers = pasien.idusers
+                ORDER BY tanggal DESC, idkonsultasi DESC";
         $result = $conn->query($sql);
         while($row = $result->fetch_assoc()) {
     ?>
