@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jul 23, 2026 at 09:48 AM
+-- Generation Time: Jul 25, 2026 at 01:50 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -286,7 +286,28 @@ INSERT INTO `detail_konsultasi` (`idkonsultasi`, `idgejala`) VALUES
 (2, 12),
 (2, 57),
 (2, 72),
-(2, 77);
+(2, 77),
+(3, 1),
+(3, 14),
+(3, 26),
+(4, 30),
+(4, 55),
+(4, 5),
+(4, 11),
+(5, 48),
+(5, 64),
+(6, 51),
+(6, 57),
+(6, 48),
+(6, 55),
+(6, 56),
+(7, 75),
+(7, 74),
+(7, 89),
+(7, 92),
+(7, 88),
+(7, 90),
+(7, 91);
 
 -- --------------------------------------------------------
 
@@ -319,7 +340,53 @@ INSERT INTO `detail_penyakit` (`idkonsultasi`, `idpenyakit`, `persentase`) VALUE
 (2, 26, 14),
 (2, 27, 13),
 (2, 28, 11),
-(2, 30, 14);
+(2, 30, 14),
+(3, 1, 13),
+(3, 2, 13),
+(3, 3, 25),
+(3, 6, 33),
+(3, 7, 33),
+(3, 8, 17),
+(4, 1, 13),
+(4, 2, 13),
+(4, 10, 50),
+(4, 11, 25),
+(4, 12, 20),
+(4, 13, 20),
+(4, 14, 20),
+(4, 15, 20),
+(4, 16, 20),
+(4, 17, 17),
+(4, 18, 25),
+(4, 19, 20),
+(5, 12, 20),
+(5, 13, 20),
+(5, 14, 20),
+(5, 15, 20),
+(5, 16, 20),
+(5, 17, 17),
+(5, 18, 25),
+(5, 19, 20),
+(5, 21, 100),
+(5, 22, 50),
+(5, 23, 33),
+(6, 12, 60),
+(6, 13, 100),
+(6, 14, 100),
+(6, 15, 80),
+(6, 16, 80),
+(6, 17, 67),
+(6, 18, 100),
+(6, 19, 80),
+(6, 20, 25),
+(6, 21, 50),
+(6, 22, 50),
+(6, 23, 33),
+(7, 27, 63),
+(7, 29, 33),
+(7, 31, 100),
+(7, 32, 100),
+(7, 33, 75);
 
 -- --------------------------------------------------------
 
@@ -443,7 +510,6 @@ CREATE TABLE `konsultasi` (
   `idkonsultasi` int(11) NOT NULL,
   `idusers` int(11) NOT NULL DEFAULT 0,
   `tanggal` date NOT NULL,
-  `nama` varchar(50) NOT NULL,
   `usia` int(3) NOT NULL DEFAULT 0,
   `jenis_kelamin` varchar(1) NOT NULL DEFAULT '',
   `alamat` varchar(200) NOT NULL DEFAULT '',
@@ -456,9 +522,14 @@ CREATE TABLE `konsultasi` (
 -- Dumping data for table `konsultasi`
 --
 
-INSERT INTO `konsultasi` (`idkonsultasi`, `idusers`, `tanggal`, `nama`, `usia`, `jenis_kelamin`, `alamat`, `berat_badan`, `tinggi_badan`, `golongan_darah`) VALUES
-(1, 8, '2026-06-30', 'Jeremy', 16, '', 'Jalan Sonokembang Raya', 55.00, 170.00, 'O'),
-(2, 8, '2026-07-10', 'Jeremy', 15, '', 'Depok Dalam 2', 55.00, 169.00, 'B');
+INSERT INTO `konsultasi` (`idkonsultasi`, `idusers`, `tanggal`, `usia`, `jenis_kelamin`, `alamat`, `berat_badan`, `tinggi_badan`, `golongan_darah`) VALUES
+(1, 8, '2026-06-30', 16, 'L', 'Jalan Sonokembang Raya', 55.00, 170.00, 'O'),
+(2, 8, '2026-07-10', 15, 'L', 'Depok Dalam 2', 55.00, 169.00, 'B'),
+(3, 9, '2026-07-25', 29, 'L', 'Jalan Raya Buzri No 6', 55.00, 167.00, 'B'),
+(4, 10, '2026-07-25', 30, 'L', 'Jalan Raya Pangestu No 2', 60.00, 169.00, 'A'),
+(5, 11, '2026-07-25', 26, 'L', 'Jalan Raya Benuang No 165', 67.00, 177.00, 'B'),
+(6, 11, '2026-07-25', 26, 'L', 'Jalan Raya Benuang No 165', 68.00, 178.00, 'B'),
+(7, 11, '2026-07-25', 26, 'L', 'Jalan Raya Benuang No 165', 65.00, 178.00, 'B');
 
 -- --------------------------------------------------------
 
@@ -482,8 +553,11 @@ CREATE TABLE `pasien` (
 --
 
 INSERT INTO `pasien` (`idpasien`, `idusers`, `nama_lengkap`, `tanggal_lahir`, `jenis_kelamin`, `golongan_darah`, `alamat`, `created_at`) VALUES
-(1, 7, 'Yohannes', NULL, NULL, NULL, NULL, '2026-06-01 04:36:25'),
-(2, 8, 'Jeremy', NULL, NULL, NULL, NULL, '2026-06-01 05:13:25');
+(1, 7, 'Yohannes Saut', '1986-07-08', 'L', 'B', 'Jalan Haji Nawi Buntu No 6', '2026-06-01 04:36:25'),
+(2, 8, 'Jeremy Godwin', '2009-10-28', 'L', 'A', 'Jalan Raya Bogor No 16', '2026-06-01 05:13:25'),
+(3, 9, 'Johannes Halomo', '1997-01-04', 'L', 'B', 'Jalan Raya Buzri No 6', '2026-07-25 03:10:57'),
+(4, 10, 'Stewart Kristopher', '1996-07-25', 'L', 'A', 'Jalan Raya Pangestu No 2', '2026-07-25 04:45:06'),
+(5, 11, 'Reynaldi Manurung', '2000-05-24', 'L', 'B', 'Jalan Raya Benuang No 165', '2026-07-25 08:28:53');
 
 -- --------------------------------------------------------
 
@@ -560,7 +634,10 @@ INSERT INTO `users` (`idusers`, `username`, `pass`, `role`) VALUES
 (3, 'Jessica', '88e11caee979ba2bf6c1aa459b2cd77b', 'Pasien'),
 (5, 'Perawat', '88302402fc4986121efe4a68ba6f5706', 'Perawat'),
 (7, 'Yohannes', 'd0ee211fef77bd2fed4e9c3c04486a1c', 'Pasien'),
-(8, 'Jeremy', '877b13f232fe100743d38e5bcb9a82d3', 'Pasien');
+(8, 'Jeremy', '877b13f232fe100743d38e5bcb9a82d3', 'Pasien'),
+(9, 'Johannes', 'a0c1b6bf7d3d9f6c2ce001dfeaa26fa8', 'Pasien'),
+(10, 'Stewart', '0d2d8839e6d45edcb49b1627c676ea13', 'Pasien'),
+(11, 'Reynaldi', '260c4c10a32b5232de3f9029db2eabc9', 'Pasien');
 
 --
 -- Indexes for dumped tables
@@ -622,13 +699,13 @@ ALTER TABLE `gejala`
 -- AUTO_INCREMENT for table `konsultasi`
 --
 ALTER TABLE `konsultasi`
-  MODIFY `idkonsultasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idkonsultasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `pasien`
 --
 ALTER TABLE `pasien`
-  MODIFY `idpasien` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idpasien` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `penyakit`
@@ -640,7 +717,7 @@ ALTER TABLE `penyakit`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `idusers` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `idusers` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
